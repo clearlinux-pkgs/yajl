@@ -1,0 +1,31 @@
+From 1ff2de3af1842c6a5ad1e4bf5605517dbf1d2852 Mon Sep 17 00:00:00 2001
+From: Alberto Murillo <alberto.murillo.silva@intel.com>
+Date: Mon, 15 Jun 2015 15:52:49 -0500
+Subject: [PATCH] change test location
+
+---
+ test/parsing/run_tests.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/test/parsing/run_tests.sh b/test/parsing/run_tests.sh
+index b37e4dd..a63b045 100755
+--- a/test/parsing/run_tests.sh
++++ b/test/parsing/run_tests.sh
+@@ -16,11 +16,11 @@ fi
+ # find test binary on both platforms.  allow the caller to force a
+ # particular test binary (useful for non-cmake build systems).
+ if [ -z "$testBin" ]; then
+-    testBin="../build/test/parsing/Release/yajl_test.exe"
++    testBin="../../clr-build/test/parsing/Release/yajl_test.exe"
+     if [ ! -x $testBin ] ; then
+-        testBin="../build/test/parsing/Debug/yajl_test.exe"
++        testBin="../../clr-build/test/parsing/Debug/yajl_test.exe"
+         if [ ! -x $testBin ] ; then
+-            testBin="../build/test/parsing/yajl_test"
++            testBin="../../clr-build/test/parsing/yajl_test"
+             if [  ! -x $testBin ] ; then
+                 ${ECHO} "cannot execute test binary: '$testBin'"
+                 exit 1;
+-- 
+2.1.0
+
