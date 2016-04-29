@@ -4,7 +4,7 @@
 #
 Name     : yajl
 Version  : 2.1.0
-Release  : 16
+Release  : 17
 URL      : https://github.com/lloyd/yajl/archive/2.1.0.tar.gz
 Source0  : https://github.com/lloyd/yajl/archive/2.1.0.tar.gz
 Summary  : No detailed summary available
