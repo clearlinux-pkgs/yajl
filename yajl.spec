@@ -4,15 +4,16 @@
 #
 Name     : yajl
 Version  : 2.1.0
-Release  : 23
+Release  : 24
 URL      : https://github.com/lloyd/yajl/archive/2.1.0.tar.gz
 Source0  : https://github.com/lloyd/yajl/archive/2.1.0.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
-License  : MIT
-Requires: yajl-bin
-Requires: yajl-lib
-BuildRequires : cmake
+License  : ISC
+Requires: yajl-bin = %{version}-%{release}
+Requires: yajl-lib = %{version}-%{release}
+Requires: yajl-license = %{version}-%{release}
+BuildRequires : buildreq-cmake
 Patch1: 0001-change-test-location.patch
 
 %description
@@ -24,6 +25,7 @@ https://github.com/lloyd/yajl/tree/1.x
 %package bin
 Summary: bin components for the yajl package.
 Group: Binaries
+Requires: yajl-license = %{version}-%{release}
 
 %description bin
 bin components for the yajl package.
@@ -32,8 +34,10 @@ bin components for the yajl package.
 %package dev
 Summary: dev components for the yajl package.
 Group: Development
-Requires: yajl-lib
-Requires: yajl-bin
+Requires: yajl-lib = %{version}-%{release}
+Requires: yajl-bin = %{version}-%{release}
+Provides: yajl-devel = %{version}-%{release}
+Requires: yajl = %{version}-%{release}
 
 %description dev
 dev components for the yajl package.
@@ -42,9 +46,18 @@ dev components for the yajl package.
 %package lib
 Summary: lib components for the yajl package.
 Group: Libraries
+Requires: yajl-license = %{version}-%{release}
 
 %description lib
 lib components for the yajl package.
+
+
+%package license
+Summary: license components for the yajl package.
+Group: Default
+
+%description license
+license components for the yajl package.
 
 
 %prep
@@ -52,20 +65,37 @@ lib components for the yajl package.
 %patch1 -p1
 
 %build
-mkdir clr-build
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1570987249
+mkdir -p clr-build
 pushd clr-build
-cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=%{_libdir} -DLIB_SUFFIX=64
-make V=1  %{?_smp_mflags}
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
+%cmake .. -DLIB_SUFFIX=64
+make  %{?_smp_mflags}  VERBOSE=1
 popd
 
 %check
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost
-pushd test/parsing; ./run_tests.sh; cd ../api; ./run_tests.sh; popd
+export no_proxy=localhost,127.0.0.1,0.0.0.0
+cd clr-build && make test && make test-api
 
 %install
+export SOURCE_DATE_EPOCH=1570987249
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/yajl
+cp %{_builddir}/yajl-2.1.0/COPYING %{buildroot}/usr/share/package-licenses/yajl/d0bee23991ce69abdc36d8711f54982ca2fd615c
 pushd clr-build
 %make_install
 popd
@@ -85,9 +115,14 @@ popd
 /usr/include/yajl/yajl_parse.h
 /usr/include/yajl/yajl_tree.h
 /usr/include/yajl/yajl_version.h
-/usr/lib64/*.so
-/usr/lib64/pkgconfig/*.pc
+/usr/lib64/libyajl.so
+/usr/lib64/pkgconfig/yajl.pc
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/*.so.*
+/usr/lib64/libyajl.so.2
+/usr/lib64/libyajl.so.2.1.0
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/yajl/d0bee23991ce69abdc36d8711f54982ca2fd615c
