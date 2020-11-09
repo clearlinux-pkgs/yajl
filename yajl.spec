@@ -4,7 +4,7 @@
 #
 Name     : yajl
 Version  : 2.1.0
-Release  : 24
+Release  : 25
 URL      : https://github.com/lloyd/yajl/archive/2.1.0.tar.gz
 Source0  : https://github.com/lloyd/yajl/archive/2.1.0.tar.gz
 Summary  : No detailed summary available
@@ -62,6 +62,7 @@ license components for the yajl package.
 
 %prep
 %setup -q -n yajl-2.1.0
+cd %{_builddir}/yajl-2.1.0
 %patch1 -p1
 
 %build
@@ -69,7 +70,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1570987249
+export SOURCE_DATE_EPOCH=1604945012
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -77,11 +78,11 @@ export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %cmake .. -DLIB_SUFFIX=64
-make  %{?_smp_mflags}  VERBOSE=1
+make  %{?_smp_mflags}
 popd
 
 %check
@@ -92,7 +93,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build && make test && make test-api
 
 %install
-export SOURCE_DATE_EPOCH=1570987249
+export SOURCE_DATE_EPOCH=1604945012
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/yajl
 cp %{_builddir}/yajl-2.1.0/COPYING %{buildroot}/usr/share/package-licenses/yajl/d0bee23991ce69abdc36d8711f54982ca2fd615c
